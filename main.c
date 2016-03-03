@@ -1,13 +1,23 @@
-#ifndef DRAW_H
-#define DRAW_H
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
+#include "ml6.h"
+#include "display.h"
+#include "draw.h"
 #include "matrix.h"
+//#include "parser.h"
 
-void draw_line(int x0, int y0, int x1, int y1, screen s, color c);
-void add_point( struct matrix * points, int x, int y, int z);
-void add_edge( struct matrix * points, 
-	       int x0, int y0, int z0, 
-	       int x1, int y1, int z1);
-void draw_lines( struct matrix * points, screen s, color c);
+int main() {
 
-#endif
+  screen s;
+  struct matrix *edges;
+  struct matrix *transform;
+
+  edges = new_matrix(4, 4);
+  transform = new_matrix(4, 4);
+
+  
+  free_matrix( transform );
+  free_matrix( edges );
+}  
