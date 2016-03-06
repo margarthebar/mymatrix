@@ -15,16 +15,20 @@ Returns:
 adds point (x, y, z) to points and increment points.lastcol
 if points is full, should call grow on points
 ====================*/
-void add_point( struct matrix * points, int x, int y, int z) {  
+void add_point( struct matrix * points, int x, int y, int z) {
+  //printf("columns: %d\n",points->cols);
+  
   points->m[0][points->lastcol] = x;
   points->m[1][points->lastcol] = y;
   points->m[2][points->lastcol] = z;
   points->m[3][points->lastcol] = 1;
-
+  //printf("Added all parameters to matrix\n");
+  
   points->lastcol++;
   if(points->lastcol==points->cols){
-    grow_matrix(points,points->cols/2);
+    grow_matrix(points,2*(points->cols));
   }
+  //printf("Grew matrix if necessary\n");
   
 }
 
@@ -40,6 +44,7 @@ void add_edge( struct matrix * points,
 	       int x1, int y1, int z1) {
   add_point(points,x0,y0,z0);
   add_point(points,x1,y1,z1);
+  printf("Completed add_edge\n");
 }
 
 /*======== void draw_lines() ==========
@@ -51,13 +56,17 @@ Go through points 2 at a time and call draw_line to add that line
 to the screen
 ====================*/
 void draw_lines( struct matrix * points, screen s, color c) {
+  //printf("matrix m:\n");
+  //printf("lastcol: %d\n",points->lastcol);
+  //print_matrix(points);
   int i, x0, y0, x1, y1;
-  for(i=0; i<points->lastcol; i++){
+  for(i=0; i<points->lastcol; i+=2){
     x0 = points->m[0][i];
     y0 = points->m[1][i];
     x1 = points->m[0][i+1];
     y1 = points->m[1][i+1];
     draw_line(x0,y0,x1,y1,s,c);
+    //printf("%d,%d,%d,%d\n",x0,y0,x1,y1);
   }
 }
 

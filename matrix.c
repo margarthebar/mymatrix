@@ -93,16 +93,30 @@ Returns:
 turns m in to an identity matrix
 */
 void ident(struct matrix *m) {
-  int r,c;
-  for(r=0; r< m->rows; r++){
-    for(c=0; c< m->lastcol; c++){
+  int r,c,columns;
+  columns = m->lastcol;
+  if(m->lastcol==0){//if matrix is empty, create it
+    columns = m->cols;
+    //m->m[0][lastcol] = 1;
+    //m->m[1][lastcol
+    //add_edge(m,1,0,0,0,1,0);
+    //add_edge(m,0,0,1,0,0,0);
+  }
+  for(c=0; c< columns; c++){
+    for(r=0; r< m->rows; r++){
+      //printf("row: %d, col: %d\n",r,c);
       if(c==r){
+	//printf("here 1\n");
 	m->m[r][c]=1;
       }else{
+	//printf("here 0\n");
 	m->m[r][c]=0;
       }
     }
+    m->lastcol++;
   }
+  //printf("ident called\n");
+  //print_matrix(m);
 }
 
 
@@ -131,8 +145,9 @@ Returns:
 a*b -> b
 */
 void matrix_mult(struct matrix *a, struct matrix *b) {
-  struct matrix *c = new_matrix(a->rows,b->cols);
-  int a_row,a_col,b_col,a_el,b_el;
+  struct matrix *c = new_matrix(a->rows,b->lastcol);
+  int a_row,a_col,b_col;
+  double a_el,b_el;
   double sum;
   //for each row in matrix a
   for(a_row=0; a_row< a->rows; a_row++){
@@ -145,10 +160,14 @@ void matrix_mult(struct matrix *a, struct matrix *b) {
 	b_el = b->m[a_col][b_col];
 	sum += (a_el*b_el);
       }
-      //add sum to matrix c
+      //add sum to matrix b
       c->m[a_row][b_col] = sum;
+      if(c->lastcol < c->cols){
+	c->lastcol++;
+      }
     }
   }
+  copy_matrix(c,b);
 }
 
 
@@ -208,13 +227,26 @@ Returns: The rotation matrix created using theta as the
 angle of rotation and X as the axis of rotation.
 ====================*/
 struct matrix * make_rotX(double theta) {
+  theta = fmod(theta,360);
   theta = theta * (M_PI/180);
+  double cosine,sine;
+  if(theta == (90 * (M_PI/180) ) ){
+    cosine = 0;
+    sine = sin(theta);
+  }else if(theta == 0){
+    sine = 0;
+    cosine = cos(theta);
+  }else{
+    sine = sin(theta);
+    cosine = cos(theta);
+  }
+
   struct matrix *rot = new_matrix(4,4);
   ident(rot);
-  rot->m[0][0] = cos(theta);
-  rot->m[0][1] = -sin(theta);
-  rot->m[1][0] = sin(theta);
-  rot->m[1][1] = cos(theta);
+  rot->m[1][1] = cosine;
+  rot->m[1][2] = -sine;
+  rot->m[2][1] = sine;
+  rot->m[2][2] = cosine;
   return rot;
 }
 
@@ -225,13 +257,26 @@ Returns: The rotation matrix created using theta as the
 angle of rotation and Y as the axis of rotation.
 ====================*/
 struct matrix * make_rotY(double theta) {
+  theta = fmod(theta,360);
   theta = theta * (M_PI/180);
+  double cosine,sine;
+  if(theta == (90 * (M_PI/180) ) ){
+    cosine = 0;
+    sine = sin(theta);
+  }else if(theta == 0){
+    sine = 0;
+    cosine = cos(theta);
+  }else{
+    sine = sin(theta);
+    cosine = cos(theta);
+  }
+
   struct matrix *rot = new_matrix(4,4);
   ident(rot);
-  rot->m[1][1] = cos(theta);
-  rot->m[1][2] = -sin(theta);
-  rot->m[2][1] = sin(theta);
-  rot->m[2][2] = cos(theta);
+  rot->m[0][0] = cosine;
+  rot->m[0][2] = -sine;
+  rot->m[2][0] = sine;
+  rot->m[2][2] = cosine;
   return rot;
 }
 
@@ -242,12 +287,25 @@ Returns: The rotation matrix created using theta as the
 angle of rotation and Z as the axis of rotation.
 ====================*/
 struct matrix * make_rotZ(double theta) {
+  theta = fmod(theta,360);
   theta = theta * (M_PI/180);
+  double cosine,sine;
+  if(theta == (90 * (M_PI/180) ) ){
+    cosine = 0;
+    sine = sin(theta);
+  }else if(theta == 0){
+    sine = 0;
+    cosine = cos(theta);
+  }else{
+    sine = sin(theta);
+    cosine = cos(theta);
+  }
+
   struct matrix *rot = new_matrix(4,4);
   ident(rot);
-  rot->m[0][0] = cos(theta);
-  rot->m[0][2] = -sin(theta);
-  rot->m[2][0] = sin(theta);
-  rot->m[2][2] = cos(theta);
+  rot->m[0][0] = cosine;
+  rot->m[0][1] = -sine;
+  rot->m[1][0] = sine;
+  rot->m[1][1] = cosine;
   return rot;
 }
